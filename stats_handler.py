@@ -22,7 +22,7 @@ def make_dataset(std_out_file_list, save_csv= False):
         try:
             f_path, user = co_file.split('#')
             user = user.split('by')[1].split('@')[0]
-            #f_path = f_path.replace('Flintstone/main/', '')
+            f_path = f_path.replace('Flintstone/main/', '')
             info['path'] = f_path
             info['user'] = user
         except ValueError:
@@ -34,4 +34,8 @@ def make_dataset(std_out_file_list, save_csv= False):
         if save_csv:
             dataset.to_csv('p4_status.csv', sep='\t', encoding='utf-8', index=False)
 
+    return dataset
 
+def user_stats(data_column):
+
+    return data_column.value_counts().to_dict()
