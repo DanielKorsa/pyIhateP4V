@@ -37,5 +37,16 @@ def make_dataset(std_out_file_list, save_csv= False):
     return dataset
 
 def user_stats(data_column):
+    """[Get number of checked out files by user]
 
+    Args:
+        data_column ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
     return data_column.value_counts().to_dict()
+
+# def get_conflict_files(df):
+
+#     df.duplicated(subset=)
