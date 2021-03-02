@@ -47,6 +47,27 @@ def user_stats(data_column):
     """
     return data_column.value_counts().to_dict()
 
-# def get_conflict_files(df):
+def dup_files_owners(dataset):
 
-#     df.duplicated(subset=)
+    # Find duplicates
+    dataset['duplicate'] = dataset.duplicated(subset='path', keep=False)
+    #dataset.to_csv('data_p4.csv', sep='\t', encoding='utf-8', index=True)
+    mask = dataset['duplicate'] == True
+    duplicates = dataset[mask]
+    #pprint.pprint(duplicates)
+    unique_files = duplicates['path'].unique().tolist()
+    pprint.pprint(unique_files)
+    full_info = []
+    for uniq_f in unique_files:
+        info = {}
+        info['path'] = uniq_f
+        for index, row in duplicates.iterrows():
+            if uniq_f == row['path']:
+                info['user'+ str(index)] = row['user']
+        full_info.append(info)
+
+    return full_info
+
+def changelist_dataset(std_out_changelist, save_csv= False):
+
+    print('yo')
