@@ -1,5 +1,6 @@
-#
+# -*- coding: utf-8 -*-
 
+from os import error
 import pprint
 #import numpy as np
 import pandas as pd
@@ -47,6 +48,11 @@ def user_stats(data_column):
         [type]: [description]
     """
     user_stats_df = data_column.value_counts().rename_axis('user').reset_index(name='n of files')
+    user_stats_df['n of files'] = user_stats_df['n of files'].astype(str).astype(int)
+    user_stats_df['Rating'] = user_stats_df['n of files'].apply(lambda x:
+                                                            '⭐⭐⭐' if x > 100 else (
+                                                            '⭐⭐' if x > 50 else (
+                                                            '⭐' if x > 10 else '')))
     #?print('dim of df = ' + str(user_stats_df.shape))
     #?user_stats_df.to_csv('user_stats.csv', sep='\t', encoding='utf-8', index=True)
 
@@ -68,14 +74,39 @@ def dup_files_owners(dataset):
         info['path'] = uniq_f
         for index, row in duplicates.iterrows():
             if uniq_f == row['path']:
-                info['user'+ str(index)] = row['user']
+                #info['user'+ str(index)] = row['user']
+                info[row['user'].strip()] = '🔥'
         full_info.append(info)
 
-    #full_info_df = pd.DataFrame.from_dict(full_info)
+    full_info_df = pd.DataFrame.from_dict(full_info)
     #print(type(full_info_df))
 
-    return full_info
+    return full_info_df
 
 def changelist_dataset(std_out_changelist, save_csv= False):
 
-    print('yo')
+    #pprint.pprint(std_out_changelist)
+    changelist = []
+    for change in std_out_changelist:
+        info = {}
+        try:
+            change_n = change.split('on', 1)[0].split('Change')[1]
+            #print(change)
+            date = change.split('on', 1)[1].split('by')[0]
+            user = change.split('by')[1].split('@')[0]
+            description = '[' + change.split('[')[1].replace('  ', ' ')
+
+            info['change_n'] = change_n
+            info['date'] = date
+            info['user'] = user
+            info['description'] = description
+
+            changelist.append(info)
+
+        except IndexError:
+            #print('ERROR')
+            continue
+
+    changelist_dt = pd.DataFrame.from_dict(changelist)
+
+    return changelist_dt

@@ -94,3 +94,10 @@
 
 
 # '//Flintstone/main/WP_based/Panels/AnalyserPanel2Y/Private/GraphicObjects/IC50-Control/AnaPnl_PX_GraphicObject_Handler(IC50-Control).vi#49 - edit default change (binary) by peter.prinzen@peter.prinzen_Arco2_305\r\n'
+
+
+
+change = "Change 21228 on 2021/03/02 by danil.konowalow@Danil.Konowalow_Ayinger_flintstone_4209 '[Testing]  - Added Python DEBUG"
+
+description = '[' + change.split('[')[1].replace('  ', ' ')
+print(description)
