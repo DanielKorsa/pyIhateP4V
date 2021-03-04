@@ -3,6 +3,7 @@
 import pprint
 #import numpy as np
 import pandas as pd
+from pandas.core.frame import DataFrame
 
 #dataset.to_csv('PANDAS_CSV_LAST.csv', sep='\t', encoding='utf-8', index=False) #save db in csv
 
@@ -45,7 +46,11 @@ def user_stats(data_column):
     Returns:
         [type]: [description]
     """
-    return data_column.value_counts().to_dict()
+    user_stats_df = data_column.value_counts().rename_axis('user').reset_index(name='n of files')
+    #?print('dim of df = ' + str(user_stats_df.shape))
+    #?user_stats_df.to_csv('user_stats.csv', sep='\t', encoding='utf-8', index=True)
+
+    return user_stats_df
 
 def dup_files_owners(dataset):
 
@@ -56,7 +61,7 @@ def dup_files_owners(dataset):
     duplicates = dataset[mask]
     #pprint.pprint(duplicates)
     unique_files = duplicates['path'].unique().tolist()
-    pprint.pprint(unique_files)
+    #?pprint.pprint(unique_files)
     full_info = []
     for uniq_f in unique_files:
         info = {}
@@ -65,6 +70,9 @@ def dup_files_owners(dataset):
             if uniq_f == row['path']:
                 info['user'+ str(index)] = row['user']
         full_info.append(info)
+
+    #full_info_df = pd.DataFrame.from_dict(full_info)
+    #print(type(full_info_df))
 
     return full_info
 

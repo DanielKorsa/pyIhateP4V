@@ -39,5 +39,5 @@ def get_changelists(n_in_list=20):
 
     return changelists
 
-a = get_changelists()
-pprint.pprint(a)
+# a = get_changelists()
+# pprint.pprint(a)

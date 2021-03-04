@@ -1,9 +1,22 @@
-import dash
+from stats_handler import user_stats
+import dash, dash_table
 import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 import plotly.graph_objs as go
 
+from handler import logic_handler
+
+#! N of checked out files per user
+#? All Checked out Files
+#? Conflicting Files
+#? Last 5 check outs
+
+user_stats, chkdout_stats = logic_handler()
+colors = {
+    'background': '#111111',
+    'text': '#7FDBFF'
+}
 app = dash.Dash()
 
 df = pd.read_csv(
@@ -13,35 +26,37 @@ df = pd.read_csv(
     'gdp-life-exp-2007.csv')
 
 
-app.layout = html.Div([
-    dcc.Graph(
-        id='life-exp-vs-gdp',
-        figure={
-            'data': [
-                go.Scatter(
-                    x=df[df['continent'] == i]['gdp per capita'],
-                    y=df[df['continent'] == i]['life expectancy'],
-                    text=df[df['continent'] == i]['country'],
-                    mode='markers',
-                    opacity=0.8,
-                    marker={
-                        'size': 15,
-                        'line': {'width': 0.5, 'color': 'white'}
-                    },
-                    name=i
-                ) for i in df.continent.unique()
-            ],
-            'layout': go.Layout(
-                xaxis={'type': 'log', 'title': 'GDP Per Capita'},
-                yaxis={'title': 'Life Expectancy'},
-                margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
-                legend={'x': 0, 'y': 1},
-                hovermode='closest'
-            )
-        }
+app.layout = html.Div(children=[
+    html.H1(children='P4V Nanion Monitor'),
+    html.H2(children = chkdout_stats,
+    style= {
+        'color': colors['text']
+    }),
+
+    dash_table.DataTable(
+        id='Parallel check outs',
+        # style_data={
+        # 'whiteSpace': 'normal',
+        # 'height': 'auto',
+        # 'lineHeight': '30px'
+        # },
+        columns=[{"name": i, "id": i} for i in user_stats.columns],
+        style_cell_conditional=[
+            {'if': {'column_id': 'user'},
+            'width': '200px',
+            'textAlign': 'left'
+            },
+            {'if': {'column_id': 'n of files'},
+            'width': '200px',
+            'textAlign': 'center'
+            },
+        ],
+        data=user_stats.to_dict('records'),
+        fill_width=False
     )
-])
+    ]
+)
 
 if __name__ == '__main__':
-    #app.run_server()
-    app.run_server(host= '0.0.0.0', port=8050,debug=False)
+    app.run_server(debug=True)
+#     #app.run_server(host= '0.0.0.0', port=5000,debug=False)
